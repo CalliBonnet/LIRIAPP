@@ -31,16 +31,20 @@ let band = new searchedBand ("band name", "vanue name", "venue location", "event
 console.log(band); 
 
 
-//When the user types 'concert-this', it will call this funcation
-const commandLineBands =  process.argv[2]; 
+//this is the 3rd place on the command line 
+const commandLine =  process.argv[2]; 
+//when the 4th place on the command line is a band name 
+let bandName = process.argv[3]; 
+
+
 
 bandDetials = function() {
-    if(commandLineBands === 'concert-this') {
+    if(commandLine === 'concert-this') {
         console.log("this is working")
+        console.log(bandName); 
       
     } else {
         console.log("this is NOT working")
-       
     }
 }
 

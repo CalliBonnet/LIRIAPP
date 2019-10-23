@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/CalliBonnet/LIRIAPP/issues"
   },
-  "homepage": "https://github.com/CalliBonnet/LIRIAPP#readme"
+  "homepage": "https://github.com/CalliBonnet/LIRIAPP#readme",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "node-spotify-api": "^1.1.1",
+    "request": "^2.88.0"
+  }
 }

@@ -42,13 +42,15 @@ let NameofMovie = userSearch;
 //this is my MovieAPI key 
 let movieAPIKey = "e038599e"; 
 //this is the movie API endpoint 
-let movieAPIendpoint = "http://www.omdbapi.com/?t=" + NameofMovie + "&apikey=" + movieAPIKey; 
+let movieAPIendpoint = "http://www.omdbapi.com/?t=" + NameofMovie + "&apikey=e038599e"; 
 
 
 request(movieAPIendpoint, function(err, responce, body){
 
     if(err && responce.statusCode === 200) {
+
         let body = JSON.parse(body); 
+
         console.log('++++++++++ Your Movie Info ++++++++++++++'); 
         console.log("Movie Title: " + body.Title); 
         console.log("Release Year: " + body.Year); 
@@ -63,8 +65,12 @@ request(movieAPIendpoint, function(err, responce, body){
         console.log("An error has occoured... try again"); 
 
     }
-}); 
 
+    if(NameofMovie === "The Help") {
+        console.log("____________________________________"); 
+        Console.log("the help is on their way!");
+    }
+}); 
 }
 //end of Movies 
 

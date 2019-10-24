@@ -29,7 +29,7 @@ axios
 
 
 //spotify-this-song API 
-let spotify = new Spotify({
+let spotify = new spotify({
     id: spotifyKeys["spotify"].id,
     secret: spotifyKeys["spotify"].secret
 });

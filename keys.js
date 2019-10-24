@@ -1,6 +1,8 @@
 console.log('this is loaded');
 
-exports.spotify = {
-  id: process.env.SPOTIFY_ID,
+let spotify = {
+  id: "827867f30f014855ab475008ddd2c688",
   secret: process.env.SPOTIFY_SECRET
 };
+
+module.exports(spotify); 

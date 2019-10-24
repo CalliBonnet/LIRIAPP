@@ -1,85 +1,133 @@
-// require("dotenv").config(); 
 
-//required items 
-var keys = require("./keys.js"); 
-var fs = require("fs"); 
-var request = require("request"); 
-var spotify = require('node-spotify-api'); 
+//require for the program to run 
+require("dotenv").config();
+let fs = require("fs");
+let moment = require("moment");
 
-//this is capturing the user's command ---> concert-this
-let commandLine = process.argv[2]; 
-//ths is capturig what the user types after the command line 
-let userSearch = process.argv[3]; 
+let axios = require("axios");
+let Spotify = require("node-spotify-api");
 
-//when the user types more than one word 
-for (let i = 4; i < process.argv.length; i++) {
-    userSearch += '+' + process.argv[i]; 
-}
+const spotifyKeys = require("./keys");
 
 
 
-//This is going to trak what the user says and then run the corasponding function 
-function doWhatTheUserSays(commandLine) {
 
-switch (commandLine) {
+//concert-this API 
+let concertQueryURL = "https://rest.bandsintown.com/artists/" + bandName + "/events?app_id=codingbootcamp";
 
-    case 'movie-this':
-    fetchMovie(); 
-    break; 
+console.log(concertQueryURL);
 
-    case 'spotify-this-song': 
-    fetchSpotify(); 
-    break; 
-
-}
-
-
-//Movies 
-function fetchMovie() {
-    //this is re-declaring userSearch with the movie name that the user types in 
-let NameofMovie = userSearch; 
-
-//this is my MovieAPI key 
-let movieAPIKey = "e038599e"; 
-//this is the movie API endpoint 
-let movieAPIendpoint = "http://www.omdbapi.com/?t=" + NameofMovie + "&apikey=e038599e"; 
-
-
-request(movieAPIendpoint, function(err, responce, body){
-
-    if(err && responce.statusCode === 200) {
-
-        let body = JSON.parse(body); 
-
-        console.log('++++++++++ Your Movie Info ++++++++++++++'); 
-        console.log("Movie Title: " + body.Title); 
-        console.log("Release Year: " + body.Year); 
-        console.log("IMdB Rating: " + body.imdbRating); 
-        console.log("Country: " + body.Country); 
-        console.log("Language: " + body.Language); 
-        console.log("Plot: " + body.Plot); 
-        console.log("Actors: " + body.Actors); 
-
-    }else{
-        //if the request was not successful, we will throw an error 
-        console.log("An error has occoured... try again"); 
-
+axios
+    .get(concertQueryURL)
+    .then(function (bandFetch) {
+        console.log("Venue: " + bandFetch.data[0].venue.name);
+        console.log("City: " + bandFetch.data[0].venue.city);
+        console.log(moment(bandFetch.data[0].datetime).format("MM/DD/YYYY"));
     }
+    );
 
-    if(NameofMovie === "The Help") {
-        console.log("____________________________________"); 
-        Console.log("the help is on their way!");
+
+
+//spotify-this-song API 
+let spotify = new Spotify({
+    id: spotifyKeys["spotify"].id,
+    secret: spotifyKeys["spotify"].secret
+});
+
+spotify
+    .request('https://api.spotify.com/v1/search?q=track:' + songName + '&type=track&limit=10', function (err, songResponse) {
+        if (err) {
+            return console.log(err);
+        }
+        console.log("Artist: " + songResponse.tracks.item[0].artist[0].name);
+        console.log("Song: " + songResponse.tracks.item[0].name);
+        console.log("URL: " + songResponse.tracks.item[0].preview_url);
+        console.log("Album: " + songResponse.tracks.item[0].album.name);
+    });
+
+
+//movie-this API 
+let movieQureyURL = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
+
+
+axios
+    .get(movieQureyURL)
+    .then(function (movieFetch) {
+        console.log("Title: " + movieFetch.data.Title);
+        console.log("Year: " + movieFetch.data.Year);
+        console.log("Rated: " + movieFetch.data.imdbRating);
+        console.log("Country: " + movieFetch.data.Country);
+        console.log("Language: " + movieFetch.data.Language);
+        console.log("Plot: " + movieFetch.data.Plot);
+        console.log("Actors: " + movieFetch.data.Actors);
+        console.log("Rotten Tomatoes: " + movieFetch.data.Ratings[1].Value);
     }
-}); 
+    );
+
+
+
+
+//this is going to capture the user's input 
+let userInput = process.argv;
+
+//this is the funcition that will run the concert-this 
+function bandDetials() {
+    let bandName = "";
+    for (let i = 3; i < userInput.length; i++) {
+        if (i > 3 && userInput.length) {
+            bandName = bandName + "+" + userInput[i];
+        } else {
+            bandName += userInput[i];
+        }
+    }
+};
+
+
+//this is the functiion that will run the spotify 
+function songDetials() {
+    let songName = "";
+    for (let i = 3; i < userInput.length; i++) {
+        if (i > 3 && userInput.length) {
+            songName = songName + "+" + userInput[i];
+        } else {
+            songName += userInput[i];
+        }
+    }
+};
+
+//this is the funcation that will run the movie-this 
+function movieDetials() {
+    let movieName = "";
+    for (let i = 3; i < userInput.length; i++) {
+        if (i > 3 && userInput.length) {
+            movieName = movieName + "+" + userInput[i];
+        } else {
+            movieName += userInput[i];
+        }
+    }
+};
+
+
+//this is going to capture the user's command ex: movie-this 
+let userComandLine = process.argv[2];
+
+//this is going to run the right funcation 
+if (userComandLine === "concert-this") {
+    bandDetials();
+} else {
+    return;
 }
-//end of Movies 
 
 
+if (userComandLine === "spotify-this-song") {
+    songDetials();
+} else {
+    return;
+}
 
 
-
-
-    //end of the complete switch funcation 
-}; 
-
-doWhatTheUserSays(commandLine); 
+if (userComandLine === "movie-this") {
+    movieDetials();
+} else {
+    return;
+}
